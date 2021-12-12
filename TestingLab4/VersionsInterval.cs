@@ -11,9 +11,10 @@ namespace TestingLab4
         public Versions leftVersion { get; set; }
         public Versions rightVersion { get; set; }
         private static string sign = "";
+        private static string[] signs = new string[2] {"", ""};
         public VersionsInterval(string versionsInterval)
         {
-            if (IsCorrect(versionsInterval) == true)
+            if (IsCorrectVersionWithSign(versionsInterval, out sign) == true)
             {
                 string noSingsVersions = versionsInterval.Remove(0, sign.Length);
                 Versions tempVersion = new Versions(noSingsVersions);
@@ -42,12 +43,48 @@ namespace TestingLab4
                         rightVersion = tempVersion;
                         break;
                 }
-                sign = "";
+
             }
             else
             {
-                throw new ArgumentException("Недопустимый знак при объявлении версии");
+                if (IsCorrectVersionsInterval(versionsInterval) == true)
+                {
+                    string[] splitedVersionsInterval = versionsInterval.Split(' ');
+                    string noSingsVersion_0 = splitedVersionsInterval[0].Remove(0, signs[0].Length);
+                    Versions tempVersion_0 = new Versions(noSingsVersion_0);
+                    switch (signs[0])
+                    {
+                        case (">"):
+                            leftVersion = tempVersion_0;
+                            leftVersion.Patch += 1;
+                            break;
+                        case (">="):
+                            leftVersion = tempVersion_0;
+                            break;
+                        throw new ArgumentException("Некорректный формат объявления интервала");
+                    }
+                    string noSingsVersion_1 = splitedVersionsInterval[1].Remove(0, signs[1].Length);
+                    Versions tempVersion_1 = new Versions(noSingsVersion_1);
+                    switch (signs[1])
+                    {
+                        case ("<"):
+                            rightVersion = tempVersion_1;
+                            rightVersion.Patch -= 1;
+                            break;
+                        case ("<="):
+                            rightVersion = tempVersion_1;
+                            break;
+                        throw new ArgumentException("Некорректный формат объявления интервала");
+                    }
+                    signs[0] = "";
+                    signs[1] = "";
+                }
+                else
+                {
+                    throw new ArgumentException("Недопустимый знак при объявлении версии");
+                }
             }
+            sign = "";
         }
         public VersionsInterval(Versions leftVersion, Versions rightVersion)
         {
@@ -56,79 +93,109 @@ namespace TestingLab4
                 this.leftVersion = leftVersion;
                 this.rightVersion = rightVersion;
             }
-            else
+            if (leftVersion > rightVersion)
             {
-                throw new ArgumentException("Начало верисионного интервала должно быть меньше его конца");
+                this.leftVersion = rightVersion;
+                this.rightVersion = leftVersion;
             }
         }
 
-        private static bool IsCorrect(string versionsInterval)
+        private static bool IsCorrectVersionWithSign(string versionsInterval, out string relatedSign)
         {
+            relatedSign = "";
             foreach (char c in versionsInterval)
             {
                 if (c == '>' || c == '<' || c == '=')
                 {
-                    sign += c;
+                    relatedSign += c;
                 }
                 else
                 {
                     break;
                 }
             }
-            if (sign == ">" || sign == ">=" || sign == "<" || sign == "<=" || sign == "=")
+            if (relatedSign == ">" || relatedSign == ">=" || relatedSign == "<" || relatedSign == "<=" || relatedSign == "=")
             {
                 if (versionsInterval.Split('.').Length == 3)
+                {
+                    if (versionsInterval.Split('.')[2] == "0" && relatedSign == "<")
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            relatedSign = "";
+            return false;
+		}
+
+        private static bool IsCorrectVersionsInterval(string versionsInterval)
+        {
+            string[] splitedVersionsInterval = versionsInterval.Split(' ');
+            if (splitedVersionsInterval.Length == 2)
+            {
+                if (IsCorrectVersionWithSign(splitedVersionsInterval[0], out signs[0]) == true &&
+                    IsCorrectVersionWithSign(splitedVersionsInterval[1], out signs[1]) == true)
                 {
                     return true;
                 }
             }
             return false;
-		}
+        }
         public static VersionsInterval[] Intersection(VersionsInterval version1, VersionsInterval version2)
         {
             if (version1.leftVersion <= version2.leftVersion)
             {
                 if (version1.rightVersion >= version2.leftVersion)
                 {
-                    return new VersionsInterval[] { new VersionsInterval(version1.leftVersion, version2.rightVersion) };
+                    if (version1.rightVersion >= version2.rightVersion)
+                    {
+                        return new VersionsInterval[] { version2 };
+                    }
+                    if (version1.rightVersion <= version2.rightVersion)
+                    {
+                        return new VersionsInterval[] { new VersionsInterval(version1.rightVersion, version2.leftVersion) };
+                    }
                 }
-                if (version1.rightVersion >= version2.rightVersion)
-                {
-                    return new VersionsInterval[] { version1 };
-                }
-                if (version1.rightVersion <= version2.rightVersion)
+                if (version1.rightVersion <= version2.leftVersion)
                 {
                     return new VersionsInterval[] { version1, version2 };
                 }
             }
-            if (version1.leftVersion >= version2.leftVersion)
+            if (version2.leftVersion <= version1.leftVersion)
             {
                 if (version2.rightVersion >= version1.leftVersion)
                 {
-                    return new VersionsInterval[] { new VersionsInterval(version2.leftVersion, version1.rightVersion) };
+                    if (version2.rightVersion >= version1.rightVersion)
+                    {
+                        return new VersionsInterval[] { version1 };
+                    }
+                    if (version2.rightVersion <= version1.rightVersion)
+                    {
+                        return new VersionsInterval[] { new VersionsInterval(version1.leftVersion, version2.rightVersion) };
+                    }
                 }
-                if (version2.rightVersion >= version1.rightVersion)
-                {
-                    return new VersionsInterval[] { version2 };
-                }
-                if (version1.rightVersion >= version2.rightVersion)
+                if (version2.rightVersion <= version1.leftVersion)
                 {
                     return new VersionsInterval[] { version2, version1 };
                 }
             }
             return new VersionsInterval[0];
         }
-        public static VersionsInterval[]? Union(VersionsInterval version1, VersionsInterval version2)
+        public static VersionsInterval? Union(VersionsInterval version1, VersionsInterval version2)
         {
             if (version1.leftVersion <= version2.leftVersion)
             {
                 if (version1.rightVersion >= version2.leftVersion)
                 {
-                    return new VersionsInterval[] { new VersionsInterval(version2.leftVersion, version1.rightVersion) };
-                }
-                if (version1.rightVersion >= version2.rightVersion)
-                {
-                    return new VersionsInterval[] { version1 };
+                    if (version1.rightVersion >= version2.rightVersion)
+                    {
+                        return version1;
+                    }
+                    if (version1.rightVersion <= version2.rightVersion)
+                    {
+                        return new VersionsInterval(version1.leftVersion, version2.rightVersion);
+                    }
                 }
                 return null;
             }
@@ -136,15 +203,18 @@ namespace TestingLab4
             {
                 if (version2.rightVersion >= version1.leftVersion)
                 {
-                    return new VersionsInterval[] { new VersionsInterval(version2.leftVersion, version2.rightVersion) };
-                }
-                if (version2.rightVersion >= version1.rightVersion)
-                {
-                    return new VersionsInterval[] { version2 };
+                    if (version2.rightVersion >= version1.rightVersion)
+                    {
+                        return version2;
+                    }
+                    if (version2.rightVersion <= version1.rightVersion)
+                    {
+                        return new VersionsInterval(version2.leftVersion, version1.rightVersion);
+                    }
                 }
                 return null;
             }
-            return new VersionsInterval[0];
+            return null;
         }
         public override string ToString()
         {
