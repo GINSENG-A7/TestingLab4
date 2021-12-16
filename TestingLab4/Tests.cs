@@ -163,6 +163,15 @@ namespace TestingLab4
 						new VersionsInterval(new Versions("3.1.4"), new Versions("5.0.9"))
 					)[0].ToString()
 				);
+			Assert.AreEqual
+				(
+					new VersionsInterval(new Versions("1.0.1"), new Versions("2.0.0")).ToString(),
+					VersionsInterval.Intersection
+					(
+						new VersionsInterval(">1.0.0"),
+						new VersionsInterval("<=2.0.0")
+					)[0].ToString()
+				);
 		}
 		[Test]
 		public void UnionTest()
@@ -201,6 +210,15 @@ namespace TestingLab4
 					(
 						new VersionsInterval(">0.0.0 <=9.3.1"),
 						new VersionsInterval(new Versions("3.1.4"), new Versions("5.0.9"))
+					).ToString()
+				);
+			Assert.AreEqual
+				(
+					new VersionsInterval(new Versions("0.0.0"), new Versions("2147483647.2147483647.2147483647")).ToString(),
+					VersionsInterval.Union
+					(
+						new VersionsInterval(">1.0.0"),
+						new VersionsInterval("<=2.0.0")
 					).ToString()
 				);
 		}
