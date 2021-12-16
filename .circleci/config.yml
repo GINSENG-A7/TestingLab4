@@ -24,7 +24,7 @@ jobs:
           command: |
             dotnet test TestingLab4.sln
       - store_test_results:
-          path: .
+          path: ./TestingLab4/Tests.cs
 
 
 # Invoke jobs via workflows
