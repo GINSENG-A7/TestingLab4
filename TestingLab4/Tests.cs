@@ -165,12 +165,16 @@ namespace TestingLab4
 				);
 			Assert.AreEqual
 				(
-					new VersionsInterval(new Versions("1.0.1"), new Versions("2.0.0")).ToString(),
-					VersionsInterval.Intersection
-					(
-						new VersionsInterval(">1.0.0"),
-						new VersionsInterval("<=2.0.0")
-					)[0].ToString()
+					new string[2] 
+					{
+						new VersionsInterval(new Versions("0.0.0"), new Versions("0.2147483647.2147483647")).ToString(), 
+						new VersionsInterval(new Versions("2.0.1"), new Versions("2147483647.2147483647.2147483647")).ToString() 
+					},
+					new string[2] 
+					{ 
+						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[0].ToString(), 
+						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[1].ToString() 
+					}
 				);
 		}
 		[Test]
@@ -214,12 +218,12 @@ namespace TestingLab4
 				);
 			Assert.AreEqual
 				(
-					new VersionsInterval(new Versions("0.0.0"), new Versions("2147483647.2147483647.2147483647")).ToString(),
+					null,
 					VersionsInterval.Union
 					(
-						new VersionsInterval(">1.0.0"),
-						new VersionsInterval("<=2.0.0")
-					).ToString()
+						new VersionsInterval("<1.0.0"),
+						new VersionsInterval(">2.0.0")
+					)
 				);
 		}
 		[Test]

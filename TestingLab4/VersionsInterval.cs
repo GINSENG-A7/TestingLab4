@@ -31,7 +31,31 @@ namespace TestingLab4
                         break;
                     case ("<"):
                         rightVersion = tempVersion;
-                        rightVersion.Patch -= 1;
+                        if (rightVersion.Patch != 0)
+                        {
+                            rightVersion.Patch -= 1;
+                        } 
+                        else
+                        {
+                            if (rightVersion.Major != 0)
+                            {
+                                rightVersion.Patch = int.MaxValue;
+                                rightVersion.Major -= 1;
+                            }
+                            else
+                            {
+                                if (rightVersion.Minor != 0)
+                                {
+                                    rightVersion.Patch = int.MaxValue;
+                                    rightVersion.Major = int.MaxValue;
+                                    rightVersion.Minor -= 1;
+                                }
+                                else
+                                {
+                                    throw new ArgumentException("Некорректный формат объявления интервала");
+                                }
+                            }
+                        }
                         leftVersion = new Versions(minVersionString);
                         break;
                     case ("<="):
@@ -69,7 +93,32 @@ namespace TestingLab4
                     {
                         case ("<"):
                             rightVersion = tempVersion_1;
-                            rightVersion.Patch -= 1;
+                            if (rightVersion.Patch != 0)
+                            {
+                                rightVersion.Patch -= 1;
+                            }
+                            else
+                            {
+                                if (rightVersion.Minor != 0)
+                                {
+                                    rightVersion.Patch = int.MaxValue;
+                                    rightVersion.Minor -= 1;
+                                }
+                                else
+                                {
+                                    if (rightVersion.Major != 0)
+                                    {
+                                        rightVersion.Patch = int.MaxValue;
+                                        rightVersion.Minor = int.MaxValue;
+                                        rightVersion.Major -= 1;
+                                    }
+                                    else
+                                    {
+                                        throw new ArgumentException("Некорректный формат объявления интервала");
+                                    }
+                                }
+                            }
+                            //leftVersion = new Versions(minVersionString);
                             break;
                         case ("<="):
                             rightVersion = tempVersion_1;
@@ -118,10 +167,10 @@ namespace TestingLab4
             {
                 if (versionsInterval.Split('.').Length == 3)
                 {
-                    if (versionsInterval.Split('.')[2] == "0" && relatedSign == "<")
-                    {
-                        return false;
-                    }
+                    //if (versionsInterval.Split('.')[2] == "0" && relatedSign == "<")
+                    //{
+                        //return false;
+                    //}
                     return true;
                 }
             }
