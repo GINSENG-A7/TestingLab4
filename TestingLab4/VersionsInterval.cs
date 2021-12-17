@@ -265,6 +265,22 @@ namespace TestingLab4
             }
             return null;
         }
+        public static bool IsEqual(VersionsInterval version1, VersionsInterval version2)
+        {
+            if (version1.leftVersion == version2.leftVersion && version1.rightVersion == version2.rightVersion)
+            {
+                return true;
+            }
+            return false;
+        }
+        public static bool operator ==(VersionsInterval version1, VersionsInterval version2)
+        {
+            return IsEqual(version1, version2);
+        }
+        public static bool operator !=(VersionsInterval version1, VersionsInterval version2)
+        {
+            return !IsEqual(version1, version2);
+        }
         public override string ToString()
         {
             return $"from {this.leftVersion.ToString()} to {this.rightVersion.ToString()}";

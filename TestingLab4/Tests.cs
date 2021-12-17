@@ -126,7 +126,7 @@ namespace TestingLab4
 		//}
 		[Test]
 		public void IntersectionTest()
-        {
+		{
 			Assert.AreEqual
 				(
 					new VersionsInterval(new Versions("1.0.0"), new Versions("1.5.0")).ToString(),
@@ -165,21 +165,21 @@ namespace TestingLab4
 				);
 			Assert.AreEqual
 				(
-					new string[2] 
+					new string[2]
 					{
-						new VersionsInterval(new Versions("0.0.0"), new Versions("0.2147483647.2147483647")).ToString(), 
-						new VersionsInterval(new Versions("2.0.1"), new Versions("2147483647.2147483647.2147483647")).ToString() 
+						new VersionsInterval(new Versions("0.0.0"), new Versions("0.2147483647.2147483647")).ToString(),
+						new VersionsInterval(new Versions("2.0.1"), new Versions("2147483647.2147483647.2147483647")).ToString()
 					},
-					new string[2] 
-					{ 
-						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[0].ToString(), 
-						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[1].ToString() 
+					new string[2]
+					{
+						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[0].ToString(),
+						VersionsInterval.Intersection(new VersionsInterval("<1.0.0"), new VersionsInterval(">2.0.0"))[1].ToString()
 					}
 				);
 		}
 		[Test]
 		public void UnionTest()
-        {
+		{
 			Assert.AreEqual
 				(
 					new VersionsInterval(new Versions("0.0.0"), new Versions("2.0.0")).ToString(),
@@ -228,24 +228,32 @@ namespace TestingLab4
 		}
 		[Test]
 		public void ToStringTest()
-        {
-			Assert.AreEqual("from 0.0.0 to 5.2.0" , new VersionsInterval("<=5.2.0").ToString());
+		{
+			Assert.AreEqual("from 0.0.0 to 5.2.0", new VersionsInterval("<=5.2.0").ToString());
 
-			Assert.AreEqual("from 4.2.0 to 6.1.8", new VersionsInterval( new Versions("4.2.0"), new Versions("6.1.8")).ToString());
+			Assert.AreEqual("from 4.2.0 to 6.1.8", new VersionsInterval(new Versions("4.2.0"), new Versions("6.1.8")).ToString());
 		}
-        [Test]
-        public void ConstructorTest()
-        {
-            Assert.AreEqual
-                (
-                    new VersionsInterval(new Versions("2.0.0"), new Versions("3.1.3")).ToString(),
-                    new VersionsInterval(">=2.0.0 <3.1.4").ToString()
-                );
+		[Test]
+		public void ConstructorTest()
+		{
+			Assert.AreEqual
+				(
+					new VersionsInterval(new Versions("2.0.0"), new Versions("3.1.3")).ToString(),
+					new VersionsInterval(">=2.0.0 <3.1.4").ToString()
+				);
 			Assert.AreEqual
 				(
 					new VersionsInterval(new Versions("0.0.0"), new Versions("3.1.3")).ToString(),
 					new VersionsInterval("<3.1.4").ToString()
 				);
 		}
-    }
+		[Test]
+		public void Equality()
+        {
+			Assert.IsTrue(new VersionsInterval(new Versions("1.6.1"), new Versions("3.1.3")) == new VersionsInterval(new Versions("1.6.1"), new Versions("3.1.3")));
+			Assert.IsTrue(new VersionsInterval(new Versions("1.0.0"), new Versions("3.0.0")) != new VersionsInterval(new Versions("1.6.1"), new Versions("3.1.3")));
+			Assert.IsFalse(new VersionsInterval(new Versions("1.6.0"), new Versions("3.1.3")) == new VersionsInterval(new Versions("1.6.1"), new Versions("3.1.3")));
+			Assert.IsFalse(new VersionsInterval(new Versions("1.0.0"), new Versions("3.0.0")) != new VersionsInterval(new Versions("1.0.0"), new Versions("3.0.0")));
+		}
+	}
 }
